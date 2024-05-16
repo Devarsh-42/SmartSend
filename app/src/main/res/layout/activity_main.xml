@@ -6,17 +6,42 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     tools:context=".MainActivity">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewID"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/ToolbarLayoutId"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="#565454"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
+        app:menu="@menu/top_action_bar"
+        app:title="Just Note It"
+        app:titleCentered="true"
+        app:titleMarginTop="12dp"
+        app:titleTextColor="@color/white" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewID"
+        android:layout_width="match_parent"
+        android:layout_height="672dp"
+        android:layout_marginBottom="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarID"
         tools:listitem="@layout/notes_item" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -25,10 +50,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="36dp"
         android:layout_marginBottom="44dp"
-        android:background="#F8F6F6"
+        android:background="#00b5c1"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:rippleColor="#D50000"
+        app:rippleColor="#00b5c1"
         app:srcCompat="@drawable/add_icon" />
 </androidx.constraintlayout.widget.ConstraintLayout>

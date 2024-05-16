@@ -7,6 +7,14 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     tools:context=".AddUserActivity">
+a
+    <ImageView
+        android:id="@+id/UserProfileImage"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="90dp"
+        android:src="@drawable/baseline_account_box_24"
+        />
 
     <EditText
         android:id="@+id/NameEDTV"
@@ -40,6 +48,14 @@
         android:id="@+id/AddBTN"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="#D50000"
         android:layout_margin="20dp"
         android:text="Add User" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"/>
 </LinearLayout>
