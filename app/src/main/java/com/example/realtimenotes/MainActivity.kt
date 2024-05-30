@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                 //We will do the Deletion Process using IDs of the User
                 val id = userAdapter.getUserId(viewHolder.adapterPosition)
 
-                val name = userAdapter.getUserName(viewHolder.adapterPosition)
+                val name = userAdapter.getUserSubject(viewHolder.adapterPosition)
 
                 myReference.child(id).removeValue() // Selected user will be deleted
 
@@ -90,7 +90,8 @@ class MainActivity : AppCompatActivity() {
                     "The User: $name was Deleted from Database",Toast.LENGTH_SHORT).show()
             }
 
-        }).attachToRecyclerView(mainBinding.recyclerViewID)//Attaches the ItemTouchHelper Method to Recycler View
+        }).attachToRecyclerView(mainBinding.recyclerViewID)
+        //Attaches the ItemTouchHelper Method to Recycler View
 
         retrieveData()
     }
@@ -103,6 +104,7 @@ class MainActivity : AppCompatActivity() {
         alertDialog.setNegativeButton("Cancel") { dialogInterface, i ->
             dialogInterface.cancel()
         }
+
         alertDialog.setPositiveButton("Yes"){dialogInterface,_->
             myReference.addValueEventListener(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -113,11 +115,9 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-
                 override fun onCancelled(error: DatabaseError) {
 
                 }
-
             })
             myReference.removeValue().addOnCompleteListener { task->
                 userAdapter.notifyDataSetChanged()
@@ -136,9 +136,9 @@ class MainActivity : AppCompatActivity() {
                     val user = eachUser.getValue(Users::class.java)
                     if (user != null) {
                         println("UserID: ${user.userID}")
-                        println("UserName: ${user.userName}")
+                        println("UserName: ${user.userSubject}")
                         println("UserEmail: ${user.userEmail}")
-                        println("UserAge: ${user.userAge}")
+                        println("UserAge: ${user.emailText}")
                         println("**************************")
                         userList.add(user)
                     }
@@ -149,7 +149,6 @@ class MainActivity : AppCompatActivity() {
                 mainBinding.recyclerViewID.layoutManager = LinearLayoutManager(this@MainActivity)
                 mainBinding.recyclerViewID.adapter = userAdapter
             }
-
             override fun onCancelled(error: DatabaseError) {
                 // Handle cancellation if needed
             }

@@ -21,9 +21,10 @@ class UserAdapter(val context: Context, private val userList: ArrayList<Users>) 
     }
 
     override fun onBindViewHolder(holder: UsersViewHolder, position: Int) {
-        holder.adapterBinding.UserNameID.text = userList[position].userName
+        holder.adapterBinding.UserSubjectID.text = userList[position].userSubject
         holder.adapterBinding.UserEmailID.text = userList[position].userEmail
-        holder.adapterBinding.UserAge.text = userList[position].userAge.toString()
+        holder.adapterBinding.emailText.text = userList[position].emailText
+        holder.adapterBinding.TimeID.text = userList[position].emailTime
 
         val imageUrl = userList[position].url
         val imageName = userList[position].imageName
@@ -48,15 +49,15 @@ class UserAdapter(val context: Context, private val userList: ArrayList<Users>) 
         holder.adapterBinding.LinearLayoutID.setOnClickListener {
             val intent = Intent(context, UpdateUserActivity::class.java)
             intent.putExtra("id", userList[position].userID)
-            intent.putExtra("name", userList[position].userName)
-            intent.putExtra("age", userList[position].userAge)
+            intent.putExtra("Subject", userList[position].userSubject)
+            intent.putExtra("EmailText", userList[position].emailText)
+            intent.putExtra("EmailTime", userList[position].emailTime)
             intent.putExtra("email", userList[position].userEmail)
             intent.putExtra("imageUrl",imageUrl)
             intent.putExtra("imageName",imageName)
             context.startActivity(intent)
         }
     }
-
 
     override fun getItemCount(): Int {
         return userList.size
@@ -66,10 +67,12 @@ class UserAdapter(val context: Context, private val userList: ArrayList<Users>) 
         //Detects/Returns the pos. of the Item to be deleted from the UserList
         return userList[position].userID
     }
-    fun getUserName(position: Int): String {
+
+    fun getUserSubject(position: Int): String {
         //Returns the username for the toast Message
-        return userList[position].userID
+        return userList[position].userSubject
     }
+
     fun getImageName(position: Int) : String{
         return userList[position].imageName
     }

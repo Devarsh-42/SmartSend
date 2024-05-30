@@ -110,17 +110,16 @@ class UpdateUserActivity : AppCompatActivity() {
     }
 
     fun getAndSetData(){
-        val name = intent.getStringExtra("name")
-        val age = intent.getIntExtra("age",1)
+        val subject = intent.getStringExtra("Subject")
+        val EmailText = intent.getStringExtra("EmailText")
         val email = intent.getStringExtra("email")
         val imageUrl = intent.getStringExtra("imageUrl").toString()
 
-        updateUserBinding.NameUpdateEDTV.setText(name)
-        updateUserBinding.AgeUpdateEDTV.setText(age.toString())
-        updateUserBinding.EmailUpdateEDTV.setText(email)
+        updateUserBinding.UpdateEmailEDTV.setText(email)
+        updateUserBinding.UpdateSubjectEDT.setText(subject)
+        updateUserBinding.UpdateEmailTextEDT.setText(EmailText)
 
         Picasso.get().load(imageUrl).into(updateUserBinding.UserUpdatedProfileImage)
-        
     }
 
     fun registerActivityForResult() {
@@ -139,22 +138,22 @@ class UpdateUserActivity : AppCompatActivity() {
         }
     }
     fun UpdateData(imageUrl : String,imageName : String) {
-        val updateName = updateUserBinding.NameUpdateEDTV.text.toString()
-        val updateEmail = updateUserBinding.EmailUpdateEDTV.text.toString()
-        val updateAge = updateUserBinding.AgeUpdateEDTV.text.toString().toInt()
+        val updateSubject = updateUserBinding.UpdateSubjectEDT.text.toString()
+        val updateEmail = updateUserBinding.UpdateEmailEDTV.text.toString()
+        val updateEmailText = updateUserBinding.UpdateEmailTextEDT.text.toString()
         val userID = intent.getStringExtra("id").toString()
 
         val userMap = mutableMapOf<String, Any>()
-        userMap["userName"] = updateName
+        userMap["userName"] = updateSubject
         userMap["userEmail"] = updateEmail
-        userMap["userAge"] = updateAge
+        userMap["userAge"] = updateEmailText
         userMap["url"] = imageUrl
         userMap["imageName"] = imageName
 
 
         myRefrence.child(userID).updateChildren(userMap).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Toast.makeText(applicationContext, "The $updateName has been Updated", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "The $updateSubject has been Updated", Toast.LENGTH_SHORT).show()
                 restoreUIState()
                 finish()
             } else {

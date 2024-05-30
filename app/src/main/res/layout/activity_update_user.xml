@@ -6,51 +6,100 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
+    android:background="@color/white"
     tools:context=".UpdateUserActivity">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/ToolbarLayoutId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#3A61F6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="#3A61F6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Update Scheduled Email"
+        app:titleCentered="true"
+        app:titleMarginTop="12dp"
+        app:titleTextColor="@color/white" />
 
     <ImageView
         android:id="@+id/UserUpdatedProfileImage"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="90dp"
-        android:src="@drawable/baseline_account_box_24"
+        android:layout_width="120dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="25dp"
+        android:src="@drawable/baseline_account_box_24_final"
         />
 
     <EditText
-        android:id="@+id/NameUpdateEDTV"
-        android:layout_width="300dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="90dp"
-        android:layout_marginBottom="12dp"
-        android:hint="Enter Name"
-        android:inputType="textPersonName"
-        android:textSize="20sp" />
-
-    <EditText
-        android:id="@+id/EmailUpdateEDTV"
-        android:layout_width="300dp"
-        android:layout_height="45dp"
-        android:layout_margin="16dp"
-        android:hint="Enter Email"
+        android:id="@+id/UpdateEmailEDTV"
+        android:layout_width="330dp"
+        android:layout_height="40dp"
+        android:layout_margin="15dp"
+        android:hint="Enter Email ID"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
         android:inputType="textEmailAddress"
-        android:textSize="20sp" />
+        android:textSize="15sp" />
+    <EditText
+        android:id="@+id/UpdateSubjectEDT"
+        android:layout_width="330dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:hint="Enter Subject"
+        android:inputType="textEmailSubject"
+        android:textSize="15sp" />
 
     <EditText
-        android:id="@+id/AgeUpdateEDTV"
-        android:layout_width="300dp"
-        android:layout_height="45dp"
+        android:id="@+id/UpdateEmailTextEDT"
+        android:layout_width="330dp"
+        android:layout_height="160dp"
         android:layout_margin="16dp"
-        android:hint="Enter Age"
-        android:inputType="number"
+        android:hint="Email Text"
+        android:textAlignment="textStart"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:lines="4"
+        android:minLines="2"
+        android:scrollbars="vertical"
         android:textSize="20sp" />
+
+
+    <Button
+        android:id="@+id/UpdateTimeBTN"
+        style="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"
+        android:text="10:00"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/PriorityInputUpdate" />
 
     <Button
         android:id="@+id/UpdateBTN"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="#D50000"
-        android:layout_margin="20dp"
-        android:text="Update User" />
+        android:backgroundTint="#3A61F6"
+        android:layout_margin="10dp"
+        android:text="Update Schedule " />
+
 
     <ProgressBar
         android:id="@+id/progressBar"

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@color/black"
+    android:background="#3A61F6"
     tools:context=".LoginActivity">
 
     <TextView
@@ -29,6 +29,7 @@
         android:layout_height="500dp"
         android:gravity="center"
         android:orientation="vertical"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
@@ -43,8 +44,8 @@
             android:layout_margin="12dp"
             android:hint="Enter Email"
             android:inputType="textEmailAddress"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
             android:textSize="25dp" />
 
         <EditText
@@ -54,8 +55,8 @@
             android:layout_margin="12dp"
             android:hint="Enter Password"
             android:inputType="textPassword"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
             android:textSize="25dp" />
 
         <Button
@@ -65,7 +66,7 @@
             android:layout_margin="20dp"
             android:backgroundTint="#D50000"
             android:text="Login"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textStyle="bold" />
 
         <Button
@@ -75,7 +76,7 @@
             android:layout_margin="20dp"
             android:backgroundTint="#D50000"
             android:text="Sign Up"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textStyle="bold" />
 
         <TextView
@@ -85,7 +86,7 @@
             android:layout_margin="20dp"
             android:gravity="center"
             android:text="Forgot Password"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="16dp" />
 
         <TextView
@@ -95,7 +96,7 @@
             android:layout_margin="20dp"
             android:gravity="center"
             android:text="Sign In With Phone Number"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="16dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

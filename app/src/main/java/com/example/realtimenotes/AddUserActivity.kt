@@ -1,6 +1,7 @@
 package com.example.realtimenotes
 
 import android.Manifest
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -15,134 +16,168 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.realtimenotes.databinding.ActivityAddUserBinding
+import com.google.ai.client.generativeai.GenerativeModel
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.runBlocking
+import java.util.Calendar
 import java.util.UUID
 
 class AddUserActivity : AppCompatActivity() {
     lateinit var addUserBinding: ActivityAddUserBinding
-    var database: FirebaseDatabase = FirebaseDatabase.getInstance()
-    var myReference: DatabaseReference = database.reference.child("MyUsers")
+    lateinit var timePickerDialog: TimePickerDialog
 
-    lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var mailScheduler: MailScheduler
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+    private var ImageUri: Uri? = null
+    private val firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
+    private val storageReference: StorageReference = firebaseStorage.reference
+    private var database: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private var myReference: DatabaseReference = database.reference.child("MyUsers")
 
-    var ImageUri : Uri? = null
-    val firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
-    val storageReference: StorageReference = firebaseStorage.reference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_user)
         addUserBinding = ActivityAddUserBinding.inflate(layoutInflater)
-        val view = addUserBinding.root
-        setContentView(view)
+        setContentView(addUserBinding.root)
 
         supportActionBar?.title = "Add User"
+        mailScheduler = MailScheduler(this)
 
-        //Resister Activity Result Launcher object in OnCreate
+        addUserBinding.PromptBTN.setOnClickListener {
+            val subject = addUserBinding.SubjectEDT.text.toString()
+            addUserBinding.progressBar.visibility = View.VISIBLE
+            val generativeModel = GenerativeModel(
+                // The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
+                modelName = "gemini-1.5-flash",
+                // Access your API key as a Build Configuration variable (see "Set up your API key" above)
+                apiKey = "AIzaSyBYXNb6VF2psWaUS4armxkf0sJLDPSv0x4"
+            )
+            val user_prompt = addUserBinding.EmailPromptEDT.text.toString()
+            val prompt = "Write an professional email on topic: $user_prompt & the Subject : $subject" +
+                    "Do not mention the subject of email only generate email text, the email should be not be too short &" +
+                    "Use Corporate language and email text Should be in proper format"
+            runBlocking {
+                val response = generativeModel.generateContent(prompt)
+                addUserBinding.EmailTextEDT.setText(response.text)
+                addUserBinding.progressBar.visibility = View.INVISIBLE
+                val prompt2 = "Generate A Summary of this email for a Sticky Note"
+                val response2 = generativeModel.generateContent(prompt2)
+            }
+        }
         registerActivityForResult()
+        setupUI()
+    }
 
+    private fun setupUI() {
         addUserBinding.AddBTN.setOnClickListener {
             uploadPhoto()
         }
         addUserBinding.UserProfileImage.setOnClickListener {
             chooseImage()
         }
+        addUserBinding.AddTimeBTN.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+            val currentMinute = calendar.get(Calendar.MINUTE)
+
+            timePickerDialog = TimePickerDialog(
+                this,
+                TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                    // Handle the selected time here
+                    val selectedTime = "$hourOfDay:$minute"
+                    addUserBinding.AddTimeBTN.text = selectedTime
+                },
+                currentHour,
+                currentMinute,
+                false
+            )
+            timePickerDialog.show()
+        }
     }
-    fun registerActivityForResult() {
+
+    private fun registerActivityForResult() {
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             val resultCode = result.resultCode
             val imageData = result.data
-
-            if(resultCode == RESULT_OK && imageData != null){
+            if (resultCode == RESULT_OK && imageData != null) {
                 ImageUri = imageData.data
-                //Picasso library -  used to show any image to show in Imageview using its Uri/url
                 ImageUri?.let {
                     Picasso.get().load(it).into(addUserBinding.UserProfileImage)
                 }
             }
-            // Add your code to handle the result here
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if(requestCode == 1 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
+        if (requestCode == 1 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            val intent = Intent().apply {
+                type = "image/*"
+                action = Intent.ACTION_GET_CONTENT
+            }
             activityResultLauncher.launch(intent)
-        }else{
-            //Notify user if they don't allow you won't be able to upload the Image
         }
     }
 
-    fun chooseImage() {
+    private fun chooseImage() {
         val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
-
         } else {
             arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
 
         if (ContextCompat.checkSelfPermission(this, permissions[0]) != PackageManager.PERMISSION_GRANTED) {
-            // Request the permission here, e.g., using ActivityCompat.requestPermissions
-            ActivityCompat.requestPermissions(this, permissions,1)
-        }else{
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
+            ActivityCompat.requestPermissions(this, permissions, 1)
+        } else {
+            val intent = Intent().apply {
+                type = "image/*"
+                action = Intent.ACTION_GET_CONTENT
+            }
             activityResultLauncher.launch(intent)
-
         }
     }
-    fun uploadPhoto() {
+
+    private fun uploadPhoto() {
         addUserBinding.AddBTN.isClickable = false
         addUserBinding.progressBar.visibility = View.VISIBLE
 
-        val userId = myReference.push().key.toString() // Generate a unique key for the user
+        val userId = myReference.push().key.toString()
         val imageName = UUID.randomUUID().toString()
-
         val imageReference = storageReference.child("images").child(userId).child(imageName)
+
         ImageUri?.let { uri ->
-            imageReference.putFile(uri).addOnSuccessListener { _ ->
-                // Image upload successful, now get the download URL
+            imageReference.putFile(uri).addOnSuccessListener {
                 imageReference.downloadUrl.addOnSuccessListener { url ->
                     val imageURL = url.toString()
-                    addUserToDatabase(userId, imageURL,imageName)
+                    addUserToDatabase(userId, imageURL, imageName)
                 }.addOnFailureListener { e ->
-                    // Handle failure to get image download URL
                     Toast.makeText(this, "Failed to get image download URL: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
                     restoreUIState()
                 }
             }.addOnFailureListener { e ->
-                // Handle failure to upload image
                 Toast.makeText(this, "Failed to upload image: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
                 restoreUIState()
             }
         } ?: run {
-            // Handle case where ImageUri is null
             Toast.makeText(this, "ImageUri is null", Toast.LENGTH_SHORT).show()
             restoreUIState()
         }
     }
 
-    fun addUserToDatabase(userId: String, imageUrl: String,imageName: String) {
-        val name: String = addUserBinding.NameEDTV.text.toString()
-        val email: String = addUserBinding.EmailEDTV.text.toString()
-        val age: Int = addUserBinding.AgeEDTV.text.toString().toInt()
+    private fun addUserToDatabase(userId: String, imageUrl: String, imageName: String) {
+        val subject = addUserBinding.SubjectEDT.text.toString()
+        val email = addUserBinding.EmailEDTV.text.toString()
+        val emailText = addUserBinding.EmailTextEDT.text.toString()
+        val emailTime = addUserBinding.AddTimeBTN.text.toString()
 
-        val user = Users(userId, name, email, age, imageUrl,imageName)
+        val user = Users(userId, subject, email, emailText, imageUrl, emailTime, imageName)
         myReference.child(userId).setValue(user).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Toast.makeText(applicationContext, "User Added to Database", Toast.LENGTH_SHORT).show()
+                scheduleEmail(to = email, subject = subject,body = emailText,time = emailTime)
                 finish()
             } else {
                 Toast.makeText(applicationContext, "Failed to add user to database: ${task.exception}", Toast.LENGTH_SHORT).show()
@@ -150,7 +185,41 @@ class AddUserActivity : AppCompatActivity() {
             restoreUIState()
         }
     }
-    fun restoreUIState() {
+
+    private fun scheduleEmail(to: String, subject: String, body: String, time: String) {
+        // Parse time string "HH:mm" to calculate delay
+        val currentTime = Calendar.getInstance()
+        val targetTime = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, time.split(":")[0].toInt())
+            set(Calendar.MINUTE, time.split(":")[1].toInt())
+        }
+
+        val delay = targetTime.timeInMillis - currentTime.timeInMillis
+        if (delay > 0) {
+            mailScheduler.scheduleMailSending(to, subject, body, delay)
+        } else {
+            Toast.makeText(this, "Scheduled time is in the past!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun initTimepicker() {
+        val calendar = Calendar.getInstance()
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = calendar.get(Calendar.MINUTE)
+
+        timePickerDialog = TimePickerDialog(
+            this,
+            TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                val selectedTime = "$hourOfDay:$minute"
+                addUserBinding.AddTimeBTN.text = selectedTime
+            },
+            currentHour,
+            currentMinute,
+            false
+        )
+    }
+
+    private fun restoreUIState() {
         addUserBinding.AddBTN.isClickable = true
         addUserBinding.progressBar.visibility = View.INVISIBLE
     }

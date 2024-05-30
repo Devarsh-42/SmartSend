@@ -65,7 +65,6 @@ class LoginActivity : AppCompatActivity() {
                     val intent = Intent(applicationContext,MainActivity::class.java)
                     startActivity(intent)
                     finish()
-
                 } else {
 
                     // If sign in fails, display a message to the user.
